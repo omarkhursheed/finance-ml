@@ -21,16 +21,18 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	return agg
 df = pd.read_csv("data_files/LSE-ABDP.csv")
 df = df[['Date','Price']]
-
+print(df.head())
 data = df['Price'].values.tolist()
 dates = df['Date'].values.tolist()
-dates = dates[1:]
 print(len(data))
 print(len(dates))
-se = pd.Series(dates)
-new_df = series_to_supervised(data)
+new_df = series_to_supervised(data,n_in=3)
 print(new_df.shape)
+dates = dates[3:]
+se = pd.Series(dates)
+
+print(len(dates))
 new_df['Date'] = se.values
 new_df = new_df.set_index(['Date'])
 
-print(new_df)
+print(new_df.head())
