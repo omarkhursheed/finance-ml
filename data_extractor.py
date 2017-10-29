@@ -6,9 +6,9 @@ quandl.ApiConfig.api_key = 'yvR18HYhyiyR51fL9UM5'
 #data  = quandl.get("NSE/BSLGOLDETF")
 #data = quandl.get("https://www.quandl.com/api/v3/databases/LSE/codes.json")
 #print(data)
-codes_list_file = pd.read_csv("LSE-datasets-codes.csv")
+codes_list_file = pd.read_csv("WIKI-datasets-codes.csv",names=["Code","Name"])
 
-for exchange in codes_list_file['LSE/DAILY_TRADES']:
+for exchange in codes_list_file['Code']:
 	df = quandl.get(exchange)
 	exchange1 = exchange.replace('/','-',1)
 	file_path =  'data_files/' + exchange1 + '.csv' 
