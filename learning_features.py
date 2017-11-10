@@ -9,7 +9,8 @@ import datetime
 from matplotlib import style
 
 df = pd.read_csv('data_files/WIKI-AAPL.csv')
-
+df['Date'] = pd.to_datetime(df['Date'])
+df = df.set_index('Date')
 #preprocessing the data
 df = df[['Adj. Open',  'Adj. High',  'Adj. Low',  'Adj. Close', 'Adj. Volume']]
 #measure of volatility
@@ -31,26 +32,28 @@ df.dropna(inplace=True)
 y = np.array(df['label'])
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
-clf = SVR()
+clf = LinearRegression()
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print(confidence)
-
 #Add forecasting code for submission on 11th November, 2017
 
 forecast_set = clf.predict(X_lately)
-print(forecast_set, confidence, forecast_out)
+#print(forecast_set, confidence, forecast_out)
 df['Forecast'] = np.nan
+#print(df.iloc[-1])
 last_date = df.iloc[-1].name
+print(last_date)
 last_unix = last_date.timestamp()
-one_dat = 86400
+one_day = 86400
 next_unix = last_unix + one_day
 
 for i in forecast_set:
 	next_date = datetime.datetime.fromtimestamp(next_unix)
 	next_unix += 86400
-	df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]
+	df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
 
+print( df.tail())
 df['Adj. Close'].plot()
 df['Forecast'].plot()
 
