@@ -7,6 +7,7 @@ import math
 import matplotlib.pyplot as plt 
 import datetime
 from matplotlib import style
+import tkinter
 
 df = pd.read_csv('data_files/WIKI-AAPL.csv')
 df['Date'] = pd.to_datetime(df['Date'])

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>Result</title>
+    <link type="text/css" href="{{ url_for('static', filename='css/mystyle.css') }}" rel="stylesheet"/>
+    <link type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+ 
+<body>
+    <div class=container>
+        <div>
+            <h2 class=text-center>Result</h2>
+        </div>
+        
+        <div class=jumbotron>
+		
+			<h3>Links</h3>
+            <div class="row btn-group">
+            	<a href="/" class="col-md-4 col-sm-4 col-xs-4 button">Home</a>
+		        <a href="/stockselect" class="col-md-4 col-sm-4 col-xs-4 button">Select Stock</a>
+		        <a href="/updateprices" class="col-md-4 col-sm-4 col-xs-4 button">Update Prices</a>
+            </div>
+		
+		    <h3>Stocks</h3>
+		    <div class=row>
+				<fieldset><legend>Result: </legend>
+				<br>
+				<p>{{ result }}</p>
+				<br>
+				</fieldset>
+			</div>
+		</div>
+		
+        <footer class="footer">
+            <p></p>
+        </footer>
+    </div>
+</body>
+ 
+</html>

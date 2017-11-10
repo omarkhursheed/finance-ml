@@ -2,10 +2,11 @@ import quandl
 import pandas as pd
 import json
 import string
+import os, os.path
 quandl.ApiConfig.api_key = 'yvR18HYhyiyR51fL9UM5'
-#data  = quandl.get("NSE/BSLGOLDETF")
-#data = quandl.get("https://www.quandl.com/api/v3/databases/LSE/codes.json")
-#print(data)
+dname = os.path.dirname(os.path.abspath(__file__))
+os.chdir(dname)
+
 codes_list_file = pd.read_csv("WIKI-datasets-codes.csv",names=["Code","Name"])
 
 for exchange in codes_list_file['Code']:
@@ -14,4 +15,4 @@ for exchange in codes_list_file['Code']:
 	file_path =  'data_files/' + exchange1 + '.csv' 
 	
 	df.to_csv(file_path)
-	print("all")
+	print(exchange+" - pulled")

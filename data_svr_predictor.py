@@ -19,10 +19,10 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	if dropnan:
 		agg.dropna(inplace=True)
 	return agg
-df = pd.read_csv("data_files/LSE-ABDP.csv")
-df = df[['Date','Price']]
+df = pd.read_csv("data_files/WIKI-AAPL.csv")
+df = df[['Date','Close']]
 print(df.head())
-data = df['Price'].values.tolist()
+data = df['Close'].values.tolist()
 dates = df['Date'].values.tolist()
 print(len(data))
 print(len(dates))

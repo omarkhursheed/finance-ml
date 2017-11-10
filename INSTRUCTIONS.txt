@@ -1,0 +1,4 @@
+1. python3 finance-ml/myapp.py
+2. Open Browser and goto the following address:
+
+localhost:5000

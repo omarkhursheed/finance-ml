@@ -1,0 +1,45 @@
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Calibri';
+}
+p, div {
+    font-family: 'Calibri';
+}
+
+.btn-group .button {
+    background-color: #337AB7; /* Blue */
+    border: 1px solid blue;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+}
+.btn-group .button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+.btn-group .button:hover {
+    background-color: #286090;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: #337AB7;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    line-height: normal;
+}
+
+select {
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    line-height: normal;
+}
