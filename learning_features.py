@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 import math
 import matplotlib.pyplot as plt 
@@ -33,10 +34,21 @@ df.dropna(inplace=True)
 y = np.array(df['label'])
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
+
+clf1 = SVR()
+clf1.fit(X_train, y_train)
+confidence1 = clf1.score(X_test, y_test)
+print('SVR : '+str(confidence1))
+
+clf2 = MLPRegressor()
+clf2.fit(X_train, y_train)
+confidence2 = clf2.score(X_test, y_test)
+print('MLP : '+str(confidence2))
+
 clf = LinearRegression()
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
-print(confidence)
+print('LR : '+str(confidence))
 #Add forecasting code for submission on 11th November, 2017
 
 forecast_set = clf.predict(X_lately)
@@ -54,7 +66,7 @@ for i in forecast_set:
 	next_unix += 86400
 	df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
 
-print( df.tail())
+#print( df.tail())
 df['Adj. Close'].plot()
 df['Forecast'].plot()
 
