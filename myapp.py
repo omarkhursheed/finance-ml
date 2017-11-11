@@ -1,6 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 from sklearn.svm import SVR
 from os import listdir
 from os.path import isfile, join
@@ -11,6 +14,12 @@ import time, datetime
 import subprocess
 import pickle
 import math
+
+import matplotlib.pyplot as plt 
+import datetime
+from matplotlib import style
+import tkinter
+
 
 app = Flask(__name__)
 
@@ -40,6 +49,8 @@ def result():
 		os.chdir(dname)
 		
 		df = pd.read_csv(os.path.join('data_files',selected_stock))
+		df['Date'] = pd.to_datetime(df['Date'])
+		df = df.set_index('Date')
 
 		#preprocessing the data
 		df = df[['Adj. Open',  'Adj. High',  'Adj. Low',  'Adj. Close', 'Adj. Volume']]
@@ -63,14 +74,22 @@ def result():
 
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 		
-		loaded_model = pickle.load(open(join(dname+'/models/', selected_stock+'.sav'),'rb'))
-		
-		confidence = loaded_model.score(X_test, y_test)
-		temp = str(confidence)
+		loaded_model_svr = pickle.load(open(join(dname+'/models/', selected_stock+'svr.sav'),'rb'))
+		loaded_model_lr = pickle.load(open(join(dname+'/models/', selected_stock+'lr.sav'),'rb'))
+		loaded_model_mlp = pickle.load(open(join(dname+'/models/', selected_stock+'mlp.sav'),'rb'))
+
+		confidence1 = loaded_model_svr.score(X_test, y_test)
+		temp1 = str(confidence1)
+		confidence2 = loaded_model_lr.score(X_test, y_test)
+		temp2 = str(confidence2)
+		confidence3 = loaded_model_mlp.score(X_test, y_test)
+		temp3 = str(confidence3)
 		
 		'''
-		forecast_set = loaded_model.predict(X_lately)
+		forecast_set = loaded_model_svr.predict(X_lately)
+		#print(forecast_set, confidence, forecast_out)
 		df['Forecast'] = np.nan
+		#print(df.iloc[-1])
 		last_date = df.iloc[-1].name
 		print(last_date)
 		last_unix = last_date.timestamp()
@@ -81,12 +100,11 @@ def result():
 			next_date = datetime.datetime.fromtimestamp(next_unix)
 			next_unix += 86400
 			df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
-
-		print( df.tail())
 		
+		temp_tail = df.tail()
 		'''
-		
-		return render_template("result.html",result = temp)
+
+		return render_template("result.html",result1 = temp1,result2 = temp2,result3 = temp3)
 
 @app.route('/train',methods = ['POST','GET'])
 def train():
@@ -120,7 +138,15 @@ def train():
 		clf = SVR()
 		clf.fit(X_train, y_train)
 		
-		pickle.dump(clf,open(join(dname+'/models/', selected_stock+'.sav'),'wb'))
+		lr = LinearRegression()
+		lr.fit(X_train, y_train)
+		
+		mlp = MLPRegressor()
+		mlp.fit(X_train, y_train)
+
+		pickle.dump(clf,open(join(dname+'/models/', selected_stock+'svr.sav'),'wb'))
+		pickle.dump(lr,open(join(dname+'/models/', selected_stock+'lr.sav'),'wb'))
+		pickle.dump(mlp,open(join(dname+'/models/', selected_stock+'mlp.sav'),'wb'))
 		
 		return stockselect()
 
