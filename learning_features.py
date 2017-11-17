@@ -10,6 +10,10 @@ import datetime
 from matplotlib import style
 import tkinter
 import warnings
+import os, os.path
+
+dname = os.path.dirname(os.path.abspath(__file__))
+os.chdir(dname)
 
 warnings.filterwarnings("ignore")
 
