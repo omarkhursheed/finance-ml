@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 import datetime
 from matplotlib import style
 import tkinter
+import warnings
+
+warnings.filterwarnings("ignore")
 
 df = pd.read_csv('data_files/WIKI-AAPL.csv')
 df['Date'] = pd.to_datetime(df['Date'])
