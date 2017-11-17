@@ -5,6 +5,8 @@ from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
+import matplotlib
+matplotlib.use('TkAgg')
 import math
 import matplotlib.pyplot as plt 
 import datetime
@@ -36,10 +38,12 @@ X = np.array(df.drop(['label'],1))
 X = preprocessing.scale(X)
 X_lately = X[-forecast_out:]
 X = X[:-forecast_out]
+first_for_compare = df['Adj. Close'].iloc[-1]
 
+print(df.tail())
 df.dropna(inplace=True)
 y = np.array(df['label'])
-
+print(first_for_compare)
 num_instances = len(X)
 
 seed = 7
@@ -88,6 +92,7 @@ for i in forecast_set:
 	df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
 
 #print( df.tail())
+last_for_compare = df['Forecast'].iloc[-1]
 df['Adj. Close'].plot()
 df['Forecast'].plot()
 
