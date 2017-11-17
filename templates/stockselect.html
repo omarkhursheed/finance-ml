@@ -20,28 +20,10 @@
             <div class="row btn-group">
             	<a href="/" class="col-md-4 col-sm-4 col-xs-4 button">Home</a>
 		        <a href="/stockselect" class="col-md-4 col-sm-4 col-xs-4 button">Select Stock</a>
-		        <a href="/updateprices" class="col-md-4 col-sm-4 col-xs-4 button">Update Prices</a>
-            </div>
-                   
-            <h3>Stocks</h3>
-            
-            <div class=row>
-            <fieldset><legend>Select stock: </legend>
-		        <form id=stock_form action="http://localhost:5000/train" method=post>
-				    <br>
-					<select id=file_select name=file_select method=post>
-					{% for file in files %}
-						<option value= "{{file}}" SELECTED>{{file}}</option>"
-					{% endfor %}
-					</select>
-					<input name=Submit type=submit value="Train"/>
-				</form>
-				<form id=stock_form action="http://localhost:5000/trainall" method=post>
-					<input name=Submit type=submit value="Train All"/>
-				</form>
-				</fieldset>
+		        <a href="/adminsec" class="col-md-4 col-sm-4 col-xs-4 button">Admin</a>
             </div>
             
+            <br>
             <div class=row>
             <fieldset><legend>Select stock: </legend>
 		        <form id=stock_form action="http://localhost:5000/result" method=post>

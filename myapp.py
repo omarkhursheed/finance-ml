@@ -36,11 +36,6 @@ def main():
 def stockselect():
 	return render_template('stockselect.html', files=onlyfiles)
 	
-@app.route('/updateprices')
-def updateprices():
-	subprocess.call(['gnome-terminal', '-e', 'python3 '+dname+'/data_extractor.py'])
-	return render_template('home.html')
-	
 @app.route('/result',methods = ['POST','GET'])
 def result():
 	if request.method == 'POST':
@@ -85,24 +80,6 @@ def result():
 		confidence3 = loaded_model_mlp.score(X_test, y_test)
 		temp3 = str(confidence3)
 		
-		'''
-		forecast_set = loaded_model_svr.predict(X_lately)
-		#print(forecast_set, confidence, forecast_out)
-		df['Forecast'] = np.nan
-		#print(df.iloc[-1])
-		last_date = df.iloc[-1].name
-		print(last_date)
-		last_unix = last_date.timestamp()
-		one_day = 86400
-		next_unix = last_unix + one_day
-
-		for i in forecast_set:
-			next_date = datetime.datetime.fromtimestamp(next_unix)
-			next_unix += 86400
-			df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
-		
-		temp_tail = df.tail()
-		'''
 
 		return render_template("result.html",result1 = temp1,result2 = temp2,result3 = temp3)
 
@@ -148,15 +125,25 @@ def train():
 		pickle.dump(lr,open(join(dname+'/models/', selected_stock+'lr.sav'),'wb'))
 		pickle.dump(mlp,open(join(dname+'/models/', selected_stock+'mlp.sav'),'wb'))
 		
-		return stockselect()
+		return adminsec()
 
 @app.route('/trainall',methods = ['POST','GET'])
 def trainall():
 	if request.method == 'POST':
 		subprocess.call(['gnome-terminal', '-e', 'python3 '+dname+'/trainall.py'])
 		
-		return stockselect()
+		return adminsec()
 
+@app.route('/updateprices',methods = ['POST','GET'])
+def updateprices():
+	if request.method == 'POST':
+		subprocess.call(['gnome-terminal', '-e', 'python3 '+dname+'/data_extractor.py'])
+		
+		return adminsec()
+
+@app.route('/adminsec')
+def adminsec():
+	return render_template('adminsec.html', files=onlyfiles)
 
 @app.context_processor
 def override_url_for():
