@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn import model_selection
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
@@ -37,28 +38,41 @@ X_lately = X[-forecast_out:]
 X = X[:-forecast_out]
 
 df.dropna(inplace=True)
-
 y = np.array(df['label'])
+
+num_instances = len(X)
+
+seed = 7
+num_samples = 10
+test_size = 0.33
+#kfold = model_selection.KFold(n_splits=5, random_state=seed)
+kfold = model_selection.ShuffleSplit(n_splits=5, test_size=test_size, random_state=seed)
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 
 clf1 = SVR()
+confidence1kfold = model_selection.cross_val_score(clf1, X, y, cv=kfold)
+print("SVR (KFold) : %.3f%% (%.3f%%)" % (confidence1kfold.mean()*100.0, confidence1kfold.std()*100.0))
 clf1.fit(X_train, y_train)
 confidence1 = clf1.score(X_test, y_test)
-print('SVR : '+str(confidence1))
+print("SVR : %.3f%%" % (confidence1*100.0))
 
 clf2 = MLPRegressor()
+confidence2kfold = model_selection.cross_val_score(clf2, X, y, cv=kfold)
+print("MLP (KFold) : %.3f%% (%.3f%%)" % (confidence2kfold.mean()*100.0, confidence2kfold.std()*100.0))
 clf2.fit(X_train, y_train)
 confidence2 = clf2.score(X_test, y_test)
-print('MLP : '+str(confidence2))
+print("MLP : %.3f%%" % (confidence2*100.0))
 
 clf = LinearRegression()
+confidencekfold = model_selection.cross_val_score(clf, X, y, cv=kfold)
+print("LR (KFold) : %.3f%% (%.3f%%)" % (confidencekfold.mean()*100.0, confidencekfold.std()*100.0))
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
-print('LR : '+str(confidence))
-#Add forecasting code for submission on 11th November, 2017
+print("LR : %.3f%%" % (confidence*100.0))
 
-forecast_set = clf.predict(X_lately)
+#Add forecasting code for submission on 11th November, 2017
+forecast_set = clf1.predict(X_lately)
 #print(forecast_set, confidence, forecast_out)
 df['Forecast'] = np.nan
 #print(df.iloc[-1])
