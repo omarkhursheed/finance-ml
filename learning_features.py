@@ -44,6 +44,7 @@ print(df.tail())
 df.dropna(inplace=True)
 y = np.array(df['label'])
 print(first_for_compare)
+
 num_instances = len(X)
 
 seed = 7
@@ -55,22 +56,28 @@ kfold = model_selection.ShuffleSplit(n_splits=5, test_size=test_size, random_sta
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 
 clf1 = SVR()
+
 confidence1kfold = model_selection.cross_val_score(clf1, X, y, cv=kfold)
 print("SVR (KFold) : %.3f%% (%.3f%%)" % (confidence1kfold.mean()*100.0, confidence1kfold.std()*100.0))
+
 clf1.fit(X_train, y_train)
 confidence1 = clf1.score(X_test, y_test)
 print("SVR : %.3f%%" % (confidence1*100.0))
 
 clf2 = MLPRegressor()
+
 confidence2kfold = model_selection.cross_val_score(clf2, X, y, cv=kfold)
 print("MLP (KFold) : %.3f%% (%.3f%%)" % (confidence2kfold.mean()*100.0, confidence2kfold.std()*100.0))
+
 clf2.fit(X_train, y_train)
 confidence2 = clf2.score(X_test, y_test)
 print("MLP : %.3f%%" % (confidence2*100.0))
 
 clf = LinearRegression()
+
 confidencekfold = model_selection.cross_val_score(clf, X, y, cv=kfold)
 print("LR (KFold) : %.3f%% (%.3f%%)" % (confidencekfold.mean()*100.0, confidencekfold.std()*100.0))
+
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print("LR : %.3f%%" % (confidence*100.0))

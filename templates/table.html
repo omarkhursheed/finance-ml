@@ -2,7 +2,7 @@
 <html lang="en">
  
 <head>
-    <title>Select Stock</title>
+    <title>Table</title>
     <link type="text/css" href="{{ url_for('static', filename='css/mystyle.css') }}" rel="stylesheet"/>
 	<link type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet"/>
 	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -11,12 +11,12 @@
 <body>
     <div class=container>
         <div>
-            <h2 class=text-center>Select Stock</h2>
+            <h2 class=text-center>Home Page</h2>
         </div>
  
         <div class=jumbotron>
- 		
- 			<h3>Links</h3>
+        
+            <h3>Links</h3>
             <div class="row btn-group">
             	<a href="/" class="col-md-3 col-sm-3 col-xs-3 button">Home</a>
 		        <a href="/stockselect" class="col-md-3 col-sm-3 col-xs-3 button">Select Stock</a>
@@ -24,21 +24,11 @@
 		        <a href="/adminsec" class="col-md-3 col-sm-3 col-xs-3 button">Admin</a>
             </div>
             
-            <br>
             <div class=row>
-            <fieldset><legend>Select stock: </legend>
-		        <form id=stock_form action="http://localhost:5000/result" method=post>
-				    <br>
-					<select id=file_select name=file_select method=post>
-					{% for file in onlyfiles %}
-						<option value= "{{file}}" SELECTED>{{file}}</option>"
-					{% endfor %}
-					</select>
-					<input name=Submit type=submit value="Result"/>
-				</form>
-			</fieldset>
-				
-            </div>
+            <br><br>
+            <center>
+            	{{ table }}
+            </center></div>
             
         </div>
  

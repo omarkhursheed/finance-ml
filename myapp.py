@@ -2,9 +2,9 @@ from flask import Flask, render_template, redirect, url_for, request
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVR
+from flask_table import Table, Col
 from os import listdir
 from os.path import isfile, join
 import os, os.path
@@ -14,6 +14,7 @@ import time, datetime
 import subprocess
 import pickle
 import math
+import csv
 
 import matplotlib.pyplot as plt 
 import datetime
@@ -23,10 +24,32 @@ import tkinter
 
 app = Flask(__name__)
 
-onlyfiles = [f for f in listdir(os.path.dirname(os.path.realpath(__file__))+'/data_files/') if isfile(join(os.path.dirname(os.path.realpath(__file__))+'/data_files/', f))]
-
 dname = os.path.dirname(os.path.abspath(__file__))
+
+onlyfiles = [f for f in listdir(dname+'/data_files/') if isfile(join(os.path.dirname(os.path.realpath(__file__))+'/data_files/', f))]
+codes_list_file = pd.read_csv(dname+'/WIKI-datasets-codes.csv',names=["Code","Name"])
+
 onlyfiles.sort()
+
+class ItemTable(Table):
+    name = Col('Name')
+    svr = Col('SVR')
+    lr = Col('LR')
+    mlp = Col('MLP')
+    last = Col('Last')
+    nex = Col('Next')
+    change = Col('Change')
+
+# Get some objects
+class Item(object):
+    def __init__(self, name, svr, lr, mlp, last, nex, change):
+        self.name = name
+        self.svr = svr
+        self.lr = lr
+        self.mlp = mlp
+        self.last = last
+        self.nex = nex
+        self.change = change
 
 @app.route('/')
 def main():
@@ -34,13 +57,14 @@ def main():
 
 @app.route('/stockselect')
 def stockselect():
-	return render_template('stockselect.html', files=onlyfiles)
+	return render_template('stockselect.html', onlyfiles=onlyfiles)
 	
 @app.route('/result',methods = ['POST','GET'])
 def result():
 	if request.method == 'POST':
 		selected_stock = request.form['file_select']
-		
+		selected_stock = selected_stock.replace('/','-',1)
+
 		os.chdir(dname)
 		
 		df = pd.read_csv(os.path.join('data_files',selected_stock))
@@ -69,16 +93,16 @@ def result():
 
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 		
-		loaded_model_svr = pickle.load(open(join(dname+'/models/', selected_stock+'svr.sav'),'rb'))
-		loaded_model_lr = pickle.load(open(join(dname+'/models/', selected_stock+'lr.sav'),'rb'))
-		loaded_model_mlp = pickle.load(open(join(dname+'/models/', selected_stock+'mlp.sav'),'rb'))
+		loaded_model_svr = pickle.load(open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'rb'))
+		loaded_model_lr = pickle.load(open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'rb'))
+		loaded_model_mlp = pickle.load(open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'rb'))
 
 		confidence1 = loaded_model_svr.score(X_test, y_test)
-		temp1 = str(confidence1)
+		temp1 = str(confidence1*100.0)
 		confidence2 = loaded_model_lr.score(X_test, y_test)
-		temp2 = str(confidence2)
+		temp2 = str(confidence2*100.0)
 		confidence3 = loaded_model_mlp.score(X_test, y_test)
-		temp3 = str(confidence3)
+		temp3 = str(confidence3*100.0)
 		
 
 		return render_template("result.html",result1 = temp1,result2 = temp2,result3 = temp3)
@@ -121,9 +145,24 @@ def train():
 		mlp = MLPRegressor()
 		mlp.fit(X_train, y_train)
 
-		pickle.dump(clf,open(join(dname+'/models/', selected_stock+'svr.sav'),'wb'))
-		pickle.dump(lr,open(join(dname+'/models/', selected_stock+'lr.sav'),'wb'))
-		pickle.dump(mlp,open(join(dname+'/models/', selected_stock+'mlp.sav'),'wb'))
+		pickle.dump(clf,open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'wb'))
+		pickle.dump(lr,open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'wb'))
+		pickle.dump(mlp,open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'wb'))
+		
+		return adminsec()
+
+@app.route('/table',methods = ['POST','GET'])
+def table():
+	os.chdir(dname)
+	xyz = pickle.load(open('my.pkl','rb'))
+	table = ItemTable(xyz, border=True)
+
+	return render_template('table.html',table=table)
+
+@app.route('/createtable',methods = ['POST','GET'])
+def createtable():
+	if request.method == 'POST':
+		subprocess.call(['gnome-terminal', '-e', 'python3 '+dname+'/createtable.py'])
 		
 		return adminsec()
 

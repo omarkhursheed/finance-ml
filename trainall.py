@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
 import math
 import pickle
@@ -47,10 +48,10 @@ def train():
 		mlp = MLPRegressor()
 		mlp.fit(X_train, y_train)
 
-		pickle.dump(clf,open(join(dname+'/models/', x+'svr.sav'),'wb'))
-		pickle.dump(lr,open(join(dname+'/models/', x+'lr.sav'),'wb'))
-		pickle.dump(mlp,open(join(dname+'/models/', x+'mlp.sav'),'wb'))
-		
+		pickle.dump(clf,open(join(dname+'/models/svr_fit/', x+'svr.sav'),'wb'))
+		pickle.dump(lr,open(join(dname+'/models/lr_fit/', x+'lr.sav'),'wb'))
+		pickle.dump(mlp,open(join(dname+'/models/mlp_fit/', x+'mlp.sav'),'wb')) 
+
 		print(x+" - trained")
 		
-train()
+train() 

@@ -18,14 +18,15 @@
         
             <h3>Links</h3>
             <div class="row btn-group">
-            	<a href="/" class="col-md-4 col-sm-4 col-xs-4 button">Home</a>
-		        <a href="/stockselect" class="col-md-4 col-sm-4 col-xs-4 button">Select Stock</a>
-		        <a href="/adminsec" class="col-md-4 col-sm-4 col-xs-4 button">Admin</a>
+            	<a href="/" class="col-md-3 col-sm-3 col-xs-3 button">Home</a>
+		        <a href="/stockselect" class="col-md-3 col-sm-3 col-xs-3 button">Select Stock</a>
+		         <a href="/table" class="col-md-3 col-sm-3 col-xs-3 button">Table</a>
+		        <a href="/adminsec" class="col-md-3 col-sm-3 col-xs-3 button">Admin</a>
             </div>
             
             <br>
             <div class="row">
-                <fieldset><legend>Select stock: </legend>
+                <fieldset><legend>Train Stocks: </legend>
                     <form id=stock_form action="http://localhost:5000/train" method=post>
                         <br>
                         <select id=file_select name=file_select method=post>
@@ -44,6 +45,12 @@
                 <fieldset><legend>Update Prices: </legend>
                     <form id=stock_form action="http://localhost:5000/updateprices" method=post>
                         <input name=Submit type=submit value="Update Prices"/>
+                    </form>
+                </fieldset>
+                
+                <fieldset><legend>Update Table: </legend>
+                    <form id=stock_form action="http://localhost:5000/createtable" method=post>
+                        <input name=Submit type=submit value="Update Table"/>
                     </form>
                 </fieldset>
             </div>
