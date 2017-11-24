@@ -83,7 +83,7 @@ confidence = clf.score(X_test, y_test)
 print("LR : %.3f%%" % (confidence*100.0))
 
 #Add forecasting code for submission on 11th November, 2017
-forecast_set = clf1.predict(X_lately)
+forecast_set = clf.predict(X_lately)
 #print(forecast_set, confidence, forecast_out)
 df['Forecast'] = np.nan
 #print(df.iloc[-1])

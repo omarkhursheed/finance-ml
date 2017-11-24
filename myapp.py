@@ -3,6 +3,7 @@ from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import accuracy_score
+from sklearn import model_selection
 from sklearn.svm import SVR
 from flask_table import Table, Col
 from os import listdir
@@ -26,7 +27,7 @@ app = Flask(__name__)
 
 dname = os.path.dirname(os.path.abspath(__file__))
 
-onlyfiles = [f for f in listdir(dname+'/data_files/') if isfile(join(os.path.dirname(os.path.realpath(__file__))+'/data_files/', f))]
+onlyfiles = [f for f in listdir(dname+'/data_files/') if isfile(join(dname+'/data_files/', f))]
 codes_list_file = pd.read_csv(dname+'/WIKI-datasets-codes.csv',names=["Code","Name"])
 
 onlyfiles.sort()
@@ -38,7 +39,7 @@ class ItemTable(Table):
     lr = Col('LR')
     mlp = Col('MLP')
     last = Col('Last')
-    nex = Col('Next')
+    nex = Col('Predicted')
     change = Col('Change')
 
 # Get some objects
@@ -58,6 +59,8 @@ def main():
 
 @app.route('/stockselect')
 def stockselect():
+	onlyfiles = [f for f in listdir(dname+'/data_files/') if isfile(join(dname+'/data_files/', f))]
+	onlyfiles.sort()
 	return render_template('stockselect.html', onlyfiles=onlyfiles)
 	
 @app.route('/result',methods = ['POST','GET'])
@@ -94,19 +97,33 @@ def result():
 
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 		
-		loaded_model_svr = pickle.load(open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'rb'))
-		loaded_model_lr = pickle.load(open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'rb'))
-		loaded_model_mlp = pickle.load(open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'rb'))
+		model_svr = pickle.load(open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'rb'))
+		model_lr = pickle.load(open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'rb'))
+		model_mlp = pickle.load(open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'rb'))
+		model_svru = pickle.load(open(join(dname+'/models/svr_unfit/', selected_stock+'svr.sav'),'rb'))
+		model_lru = pickle.load(open(join(dname+'/models/lr_unfit/', selected_stock+'lr.sav'),'rb'))
+		model_mlpu = pickle.load(open(join(dname+'/models/mlp_unfit/', selected_stock+'mlp.sav'),'rb'))
 
-		confidence1 = loaded_model_svr.score(X_test, y_test)
-		temp1 = str(confidence1*100.0)
-		confidence2 = loaded_model_lr.score(X_test, y_test)
-		temp2 = str(confidence2*100.0)
-		confidence3 = loaded_model_mlp.score(X_test, y_test)
-		temp3 = str(confidence3*100.0)
+		conf1 = model_svr.score(X_test, y_test)
+		temp1 = str(conf1*100.0)
+		conf2 = model_lr.score(X_test, y_test)
+		temp2 = str(conf2*100.0)
+		conf3 = model_mlp.score(X_test, y_test)
+		temp3 = str(conf3*100.0)
 		
+		seed = 7
+		num_samples = 10
+		test_size = 0.33
+		#kfold = model_selection.KFold(n_splits=5, random_state=seed)
+		kfold = model_selection.ShuffleSplit(n_splits=5, test_size=test_size, random_state=seed)
+		confsvr = model_selection.cross_val_score(model_svru, X, y, cv=kfold)
+		temp1c = str(confsvr.mean()*100.0)
+		conflr = model_selection.cross_val_score(model_lru, X, y, cv=kfold)
+		temp2c = str(conflr.mean()*100.0)
+		confmlp = model_selection.cross_val_score(model_mlpu, X, y, cv=kfold)
+		temp3c = str(confmlp.mean()*100.0)
 
-		return render_template("result.html",result1 = temp1,result2 = temp2,result3 = temp3)
+		return render_template("result.html",result1 = temp1,result2 = temp2,result3 = temp3,result1c = temp1c,result2c = temp2c,result3c = temp3c)
 
 @app.route('/train',methods = ['POST','GET'])
 def train():
@@ -137,16 +154,19 @@ def train():
 		y = np.array(df['label'])
 
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
-		clf = SVR()
-		clf.fit(X_train, y_train)
+		svr = SVR()
+		pickle.dump(svr,open(join(dname+'/models/svr_unfit/', selected_stock+'svr.sav'),'wb'))
+		svr.fit(X_train, y_train)
 		
 		lr = LinearRegression()
+		pickle.dump(lr,open(join(dname+'/models/lr_unfit/', selected_stock+'lr.sav'),'wb'))
 		lr.fit(X_train, y_train)
 		
 		mlp = MLPRegressor()
+		pickle.dump(mlp,open(join(dname+'/models/mlp_unfit/', selected_stock+'mlp.sav'),'wb'))
 		mlp.fit(X_train, y_train)
 
-		pickle.dump(clf,open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'wb'))
+		pickle.dump(svr,open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'wb'))
 		pickle.dump(lr,open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'wb'))
 		pickle.dump(mlp,open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'wb'))
 		
@@ -155,8 +175,8 @@ def train():
 @app.route('/table',methods = ['POST','GET'])
 def table():
 	os.chdir(dname)
-	xyz = pickle.load(open('my.pkl','rb'))
-	table = ItemTable(xyz, border=True)
+	myTable = pickle.load(open('my.pkl','rb'))
+	table = ItemTable(myTable, border=True)
 
 	return render_template('table.html',table=table)
 
@@ -183,6 +203,8 @@ def updateprices():
 
 @app.route('/adminsec')
 def adminsec():
+	onlyfiles = [f for f in listdir(dname+'/data_files/') if isfile(join(dname+'/data_files/', f))]
+	onlyfiles.sort()
 	return render_template('adminsec.html', files=onlyfiles)
 
 @app.context_processor

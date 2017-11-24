@@ -17,8 +17,8 @@ onlyfiles.sort()
 
 def train():
 	os.chdir(dname)
-	for x in onlyfiles:
-		df = pd.read_csv(os.path.join('data_files',x))
+	for selected_stock in onlyfiles:
+		df = pd.read_csv(os.path.join('data_files',selected_stock))
 		#preprocessing the data
 		df = df[['Adj. Open',  'Adj. High',  'Adj. Low',  'Adj. Close', 'Adj. Volume']]
 		#measure of volatility
@@ -39,19 +39,22 @@ def train():
 		y = np.array(df['label'])
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 		
-		clf = SVR()
-		clf.fit(X_train, y_train)
+		svr = SVR()
+		pickle.dump(svr,open(join(dname+'/models/svr_unfit/', selected_stock+'svr.sav'),'wb'))
+		svr.fit(X_train, y_train)
 		
 		lr = LinearRegression()
+		pickle.dump(lr,open(join(dname+'/models/lr_unfit/', selected_stock+'lr.sav'),'wb'))
 		lr.fit(X_train, y_train)
 		
 		mlp = MLPRegressor()
+		pickle.dump(mlp,open(join(dname+'/models/mlp_unfit/', selected_stock+'mlp.sav'),'wb'))
 		mlp.fit(X_train, y_train)
 
-		pickle.dump(clf,open(join(dname+'/models/svr_fit/', x+'svr.sav'),'wb'))
-		pickle.dump(lr,open(join(dname+'/models/lr_fit/', x+'lr.sav'),'wb'))
-		pickle.dump(mlp,open(join(dname+'/models/mlp_fit/', x+'mlp.sav'),'wb')) 
+		pickle.dump(svr,open(join(dname+'/models/svr_fit/', selected_stock+'svr.sav'),'wb'))
+		pickle.dump(lr,open(join(dname+'/models/lr_fit/', selected_stock+'lr.sav'),'wb'))
+		pickle.dump(mlp,open(join(dname+'/models/mlp_fit/', selected_stock+'mlp.sav'),'wb'))
 
-		print(x+" - trained")
+		print(selected_stock+" - trained")
 		
 train() 
