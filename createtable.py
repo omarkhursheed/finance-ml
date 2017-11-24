@@ -77,28 +77,17 @@ def createtable():
 		y = np.array(df['label'])
 		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 		
-		loaded_model_svr = pickle.load(open(join(dname+'/models/svr_unfit/', x+'svr.sav'),'rb'))
-		loaded_model_lr = pickle.load(open(join(dname+'/models/lr_unfit/', x+'lr.sav'),'rb'))
-		loaded_model_mlp = pickle.load(open(join(dname+'/models/mlp_unfit/', x+'mlp.sav'),'rb'))
+		loaded_model_svr = pickle.load(open(join(dname+'/models/svr_fit/', x+'svr.sav'),'rb'))
+		loaded_model_lr = pickle.load(open(join(dname+'/models/lr_fit/', x+'lr.sav'),'rb'))
+		loaded_model_mlp = pickle.load(open(join(dname+'/models/mlp_fit/', x+'mlp.sav'),'rb'))
 
-		num_instances = len(X)
+		confsvr = loaded_model_svr.score(X_test, y_test)
+		temp1 = str("%.3f%%" % (confsvr*100.0))
+		conflr = loaded_model_lr.score(X_test, y_test)
+		temp2 = str("%.3f%%" % (conflr*100.0))
+		confmlp = loaded_model_mlp.score(X_test, y_test)
+		temp3 = str("%.3f%%" % (confmlp*100.0))
 
-		seed = 7
-		num_samples = 10
-		test_size = 0.33
-		#kfold = model_selection.KFold(n_splits=5, random_state=seed)
-		kfold = model_selection.ShuffleSplit(n_splits=5, test_size=test_size, random_state=seed)
-
-		X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
-
-		confsvr = model_selection.cross_val_score(loaded_model_svr, X, y, cv=kfold)
-		temp1 = str("%.3f%%" % (confsvr.mean()*100.0))
-		conflr = model_selection.cross_val_score(loaded_model_lr, X, y, cv=kfold)
-		temp2 = str("%.3f%%" % (conflr.mean()*100.0))
-		confmlp = model_selection.cross_val_score(loaded_model_mlp, X, y, cv=kfold)
-		temp3 = str("%.3f%%" % (confmlp.mean()*100.0))
-
-		loaded_model_lr.fit(X_train,y_train)
 		forecast_set = loaded_model_lr.predict(X_lately)
 		df['Forecast'] = np.nan
 		last_date = df.iloc[-1].name
