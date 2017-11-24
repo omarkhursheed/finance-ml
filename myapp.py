@@ -32,6 +32,7 @@ codes_list_file = pd.read_csv(dname+'/WIKI-datasets-codes.csv',names=["Code","Na
 onlyfiles.sort()
 
 class ItemTable(Table):
+    #classes = ['table','table-striped','table-bordered','table-hover']
     name = Col('Name')
     svr = Col('SVR')
     lr = Col('LR')

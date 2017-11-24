@@ -87,7 +87,7 @@ def createtable():
 		confidence3 = loaded_model_mlp.score(X_test, y_test)
 		temp3 = str("%.3f%%" % (confidence3*100.0))
 
-		forecast_set = loaded_model_svr.predict(X_lately)
+		forecast_set = loaded_model_lr.predict(X_lately)
 		df['Forecast'] = np.nan
 		last_date = df.iloc[-1].name
 		last_unix = last_date.timestamp()
