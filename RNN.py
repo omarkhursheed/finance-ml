@@ -76,7 +76,6 @@ diff_vals = difference(X,2)
 supervised = make_supervised(diff_vals, 1)
 supervised_vals = supervised.values
 
-print("okaty")
 train_len = int(len(supervised_vals)*0.80)
 test_len = len(supervised_vals) - train_len
 train, test = supervised_vals[0:train_len,:],supervised_vals[train_len:len(supervised_vals),:]
@@ -84,7 +83,7 @@ train, test = supervised_vals[0:train_len,:],supervised_vals[train_len:len(super
 scaler, trains_s, test_s = scale(train,test)
 lstm_model = fit_lstm(trains_s, 1, 1, 4)
 train_r = trains_s[:, 0].reshape(len(trains_s),1, 1)
-print("soemntd")
+
 lstm_model.predict(train_r, batch_size=1)
 
 predictionlist = list()
