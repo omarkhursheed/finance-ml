@@ -57,20 +57,3 @@ for i in range(len(validation_series)):
 	history_validation.append(obs)
 	print('>Predicted=%.3f, Expected=%3.f'  % (yhat, obs))
 	error_list.append(abs((yhat - obs)*100/obs))
-print ("Error in validation data set")
-print(sum(error_list)/float(len(error_list)))
-# report performance
-#mse = mean_squared_error(test, predictions)
-#rmse = sqrt(mse)
-#print('RMSE: %.3f' % rmse)
-# errors
-#residuals = [test[i]-predictions[i] for i in range(len(test))]
-#residuals = DataFrame(residuals)
-#print(residuals.describe())
-# plot
-#pyplot.figure()
-#pyplot.subplot(211)
-#residuals.hist(ax=pyplot.gca())
-#pyplot.subplot(212)
-#residuals.plot(kind='kde', ax=pyplot.gca())
-#pyplot.show()
