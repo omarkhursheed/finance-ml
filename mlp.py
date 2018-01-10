@@ -20,27 +20,7 @@ os.chdir(dname)
 
 warnings.filterwarnings("ignore")
 
-'''
-import quandl
-import pandas as pd
-import json
-import string
-import os, os.path
-quandl.ApiConfig.api_key = 'yvR18HYhyiyR51fL9UM5'
-dname = os.path.dirname(os.path.abspath(__file__))
-os.chdir(dname)
 
-codes_list_file = pd.read_csv("WIKI-datasets-codes.csv",names=["Code","Name"])
-
-for exchange in codes_list_file['Code']:
-	df = quandl.get(exchange)
-	exchange1 = exchange.replace('/','-',1)
-	file_path =  'data_files/' + exchange1 + '.csv' 
-	
-	df.to_csv(file_path)
-	print(exchange+" - pulled")
-
-'''
 
 df = pd.read_csv('data_files/WIKI-AAPL.csv')
 df['Date'] = pd.to_datetime(df['Date'])
@@ -80,7 +60,6 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_
 clf2 = MLPRegressor()
 
 confidence2kfold = model_selection.cross_val_score(clf2, X, y, cv=kfold)
-print("MLP (KFold) : %.3f%% (%.3f%%)" % (confidence2kfold.mean()*100.0, confidence2kfold.std()*100.0))
 
 clf2.fit(X_train, y_train)
 confidence2 = clf2.score(X_test, y_test)
