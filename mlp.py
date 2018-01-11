@@ -59,7 +59,6 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_
 
 clf2 = MLPRegressor()
 
-confidence2kfold = model_selection.cross_val_score(clf2, X, y, cv=kfold)
 
 clf2.fit(X_train, y_train)
 confidence2 = clf2.score(X_test, y_test)
