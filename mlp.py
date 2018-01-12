@@ -18,8 +18,6 @@ import os, os.path
 dname = os.path.dirname(os.path.abspath(__file__))
 os.chdir(dname)
 
-warnings.filterwarnings("ignore")
-
 
 
 df = pd.read_csv('data_files/WIKI-AAPL.csv')
