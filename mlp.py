@@ -1,7 +1,7 @@
 mport numpy as np
 import pandas as pd
 from sklearn import model_selection
-from sklearn import preprocessing, cross_validation, svm
+from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR
