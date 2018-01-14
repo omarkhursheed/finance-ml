@@ -1,5 +1,6 @@
 mport numpy as np
 import pandas as pd
+import sklearn
 from sklearn import model_selection
 from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
