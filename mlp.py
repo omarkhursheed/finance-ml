@@ -9,11 +9,11 @@ from sklearn.svm import SVR
 import matplotlib
 matplotlib.use('TkAgg')
 import math
+
 import matplotlib.pyplot as plt 
 import datetime
 from matplotlib import style
 import tkinter
-import warnings
 import os, os.path
 
 dname = os.path.dirname(os.path.abspath(__file__))
