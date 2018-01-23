@@ -24,8 +24,6 @@ df = df[['Date','Close']]
 print(df.head())
 data = df['Close'].values.tolist()
 dates = df['Date'].values.tolist()
-print(len(data))
-print(len(dates))
 new_df = series_to_supervised(data,n_in=3)
 print(new_df.shape)
 dates = dates[3:]
